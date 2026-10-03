@@ -1,86 +1,47 @@
-# Availability courserating
+# Course Rating Availability for Moodle
 
-Restrict module and section access based on whether a user has rated the current course.
+Make an activity or course section available according to whether a learner has
+rated the current course. Use the condition to offer a follow-up after a rating,
+or to show a rating reminder to learners who have not yet submitted one.
 
-## Idea
+## Requirements and installation
 
-This availability condition makes it easy to show modules or sections only when a user has
-rated (or has not rated) a course in `tool_courserating_rating`.
+- Moodle 4.5 or later.
+- The [Course Rating plugin](https://github.com/marinaglancy/moodle-tool_courserating)
+  (`tool_courserating`) must be installed.
 
-## Conditional availability conditions
+1. Install this plugin as `availability/condition/courserating`.
+2. Complete installation through **Site administration → Notifications**.
 
-Check the global documentation about conditional availability conditions: https://docs.moodle.org/en/Conditional_activities_settings
+## Adding a restriction
 
-## Compatibility note
+1. Edit the activity or section and open **Restrict access**.
+2. Add **Course rated**.
+3. Choose **Yes** to require a rating, or **No** to require that no rating exists.
+4. Combine the condition with other restrictions if needed, then save.
 
-This plugin has not been tested in Moodle Workplace, Totara, or other Moodle-derived systems.
-
-## Installation:
-
- 1. Unpack the zip file into the availability/condition/ directory. A new directory will be created called courserating.
- 2. Go to Site administration > Notifications to complete the plugin installation.
-
-## Requirements
-
-This plugin requires Moodle 4.5+
+The condition checks the current learner's rating for this course. Ratings in
+other courses do not satisfy it. Moodle's normal restriction visibility controls
+determine whether unavailable content is hidden or displayed with an explanation.
 
 ## Troubleshooting
 
- 1. Ensure plugin `tool_courserating` is installed and the table `tool_courserating_rating` exists.
- 2. Add the restriction "Course rated" in activity or section availability settings.
- 3. Choose **Yes** to require a rating row for the current user/course, or **No** to require no rating row.
+If the condition cannot find ratings, check that Course Rating is installed and
+working in the course. Verify the restriction using learners with and without a
+rating, and review any other access restrictions on the same activity or section.
 
-## Theme support
+The condition uses Moodle's normal availability editor. Moodle Workplace, Totara
+and other derived platforms are not confirmed compatibility targets.
 
-This plugin is developed and tested on Moodle Core's Boost theme and Boost child themes, including Moodle Core's Classic theme.
+## Maintainer and origin
 
-## Plugin repositories
-
-This plugin can be maintained in your own repository for your Moodle deployment.
-
-## Bug and problem reports / Support requests
-
-This plugin is carefully developed and thoroughly tested, but bugs and problems can always appear.
-Please report bugs and problems in your internal issue tracker or repository.
-
-## Feature proposals
-
-Please issue feature proposals in your internal issue tracker or repository.
-
-## Moodle release support
-
-This plugin is maintained for the latest major releases of Moodle.
-
-## Status
-
-Maintained by Andreas Giesen.
-
-## Origin and attribution
-
-This plugin was adapted in 2026 from the GPL-licensed
-[`availability_coursecompleted`](https://github.com/ewallah/moodle-availability_coursecompleted)
-plugin. The original work is copyright iplusacademy (www.iplusacademy.org) and
-was authored and maintained by Renaat Debleu. The adaptation and subsequent
-changes are copyright 2026 Andreas Giesen.
-Fork maintainer: Andreas Giesen <andreas@108design.com> (108design).
+Adapted in 2026 from the GPL-licensed
+[Course Completed availability condition](https://github.com/ewallah/moodle-availability_coursecompleted).
+Original work: iplusacademy, authored by Renaat Debleu.
+Adaptation and subsequent changes: © 2026 Andreas Giesen.
+Maintained by Andreas Giesen <andreas@108design.com> (108design).
+Original authorship and copyright notices are retained.
 
 ## License
 
-GNU General Public License version 3 or later. See [LICENSE](LICENSE) for the
-complete license text.
-
-## Automated tests
-
-GitHub Actions tests the published plugin on Moodle 4.5 and 5.0, with MariaDB
-10.11 and PostgreSQL 16, PHP 8.3, and Firefox/Chrome on Boost/Classic.
-The test environment installs `marinaglancy/moodle-tool_courserating` at the
-revision pinned in the workflows before initialising Moodle. PHPUnit uses
-Moodle's generated configuration and fails when integration tests are skipped.
-Browser scenarios exercise rating-based access changes, user isolation and
-restricted feedback recipients. They do not rely on course completion settings.
-
-Moodle Plugin CI runs on pushes and pull requests. The existing monthly schedule
-reuses the same workflow. Mutation tests use Moodle 4.5 and the actual rating
-dependency; database mutation runs are serial. These checks do not deploy Moodle.
-Local PHP, integration and browser checks remain part of development; CI verifies
-the exact published files in a clean environment.
+GNU General Public License version 3 or later. See [LICENSE](LICENSE) for the full terms.
