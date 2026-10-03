@@ -84,6 +84,8 @@ final class advanced_test extends \advanced_testcase {
         $role = $DB->get_field('role', 'id', ['shortname' => 'student']);
         $dg->enrol_user($this->userid, $this->course->id, $role);
         $dg->enrol_user($this->ratedid, $this->course->id, $role);
+        $othercourse = $dg->create_course();
+        $dg->enrol_user($this->userid, $othercourse->id, $role);
         $role = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
         $dg->enrol_user($this->teacherid, $this->course->id, $role);
 
@@ -94,6 +96,16 @@ final class advanced_test extends \advanced_testcase {
             'courseid' => $this->course->id,
             'userid' => $this->ratedid,
             'rating' => 5,
+            'review' => '',
+            'timecreated' => time(),
+            'timemodified' => time(),
+        ]);
+
+        // Rating another course must not unlock this course or remove its users from feedback recipient lists.
+        $DB->insert_record('tool_courserating_rating', (object) [
+            'courseid' => $othercourse->id,
+            'userid' => $this->userid,
+            'rating' => 4,
             'review' => '',
             'timecreated' => time(),
             'timemodified' => time(),
