@@ -1,3 +1,9 @@
+## 0.1.1 (2026-10-03)
+
+* Export the missing-selection validation text to the restriction editor.
+* Keep the rating selector usable on Moodle 4.5 and Moodle 5.0 themes.
+* Rebuild YUI with Moodle's pinned minifier and correct mutation configuration paths.
+
 ## Test environment correction (2026-10-03)
 
 * Align CI with the declared Moodle 4.5/5.0 support and install the real rating dependency.

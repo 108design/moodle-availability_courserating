@@ -45,6 +45,15 @@ use stdClass;
  */
 class frontend extends \core_availability\frontend {
     /**
+     * Language strings used by the restriction editor.
+     *
+     * @return array Required string identifiers
+     */
+    protected function get_javascript_strings() {
+        return ['missing'];
+    }
+
+    /**
      * Decides whether this plugin should be available in a given course. The
      * plugin can do this depending on course or system settings.
      *

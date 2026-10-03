@@ -33,5 +33,5 @@ $plugin->component = 'availability_courserating';
 $plugin->requires = 2024100700;
 $plugin->maturity = MATURITY_BETA;
 $plugin->supported = [405, 500];
-$plugin->release = '0.1';
-$plugin->version = 2026022401;
+$plugin->release = '0.1.1';
+$plugin->version = 2026100300;

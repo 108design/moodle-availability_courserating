@@ -2,7 +2,7 @@
     "$schema": "https://raw.githubusercontent.com/infection/infection/0.32.3/resources/schema.json",
     "source": {
         "directories": [
-            "availability/condition/courserating/classes"
+            "classes"
         ],
         "excludes": [
             "privacy"
@@ -12,8 +12,8 @@
         "@default": true
     },
     "phpUnit": {
-        "configDir": ".",
-        "customPath": "./vendor/bin/phpunit"
+        "configDir": "../../..",
+        "customPath": "../../../vendor/bin/phpunit"
     },
     "initialTestsPhpOptions": "-dxdebug.mode=off -dpcov.enabled=1 -dpcov.directory=."
 }
