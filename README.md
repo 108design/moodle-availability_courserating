@@ -62,6 +62,7 @@ This plugin was adapted in 2026 from the GPL-licensed
 plugin. The original work is copyright iplusacademy (www.iplusacademy.org) and
 was authored and maintained by Renaat Debleu. The adaptation and subsequent
 changes are copyright 2026 Andreas Giesen.
+Fork maintainer: Andreas Giesen <andreas@108design.com> (108design).
 
 ## License
 
