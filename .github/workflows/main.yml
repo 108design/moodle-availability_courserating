@@ -94,16 +94,32 @@ jobs:
         run: moodle-plugin-ci phpunit --testdox --coverage-text --coverage-clover --fail-on-skipped --fail-on-warning
       - name: Behat Firefox Boost
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: moodle-plugin-ci behat --auto-rerun=0
+        run: |
+          if docker container inspect selenium >/dev/null 2>&1; then
+            docker container rm --force selenium
+          fi
+          moodle-plugin-ci behat --auto-rerun=0
       - name: Behat Chrome Boost
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: moodle-plugin-ci behat --profile chrome --auto-rerun=0
+        run: |
+          if docker container inspect selenium >/dev/null 2>&1; then
+            docker container rm --force selenium
+          fi
+          moodle-plugin-ci behat --profile chrome --auto-rerun=0
       - name: Behat Firefox Classic
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: moodle-plugin-ci behat --suite classic --auto-rerun=0
+        run: |
+          if docker container inspect selenium >/dev/null 2>&1; then
+            docker container rm --force selenium
+          fi
+          moodle-plugin-ci behat --suite classic --auto-rerun=0
       - name: Behat Chrome Classic
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: moodle-plugin-ci behat --suite classic --profile chrome --auto-rerun=0
+        run: |
+          if docker container inspect selenium >/dev/null 2>&1; then
+            docker container rm --force selenium
+          fi
+          moodle-plugin-ci behat --suite classic --profile chrome --auto-rerun=0
       - name: Save test diagnostics
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
