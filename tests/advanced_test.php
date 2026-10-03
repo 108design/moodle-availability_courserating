@@ -41,7 +41,6 @@ use core_availability\{tree, info_module};
  * @author    Renaat Debleu <info@eWallah.net>
  * @author    Andreas Giesen <andreas@108design.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \availability_courserating
  */
 final class advanced_test extends \advanced_testcase {
     /** @var \stdClass course. */
@@ -95,6 +94,7 @@ final class advanced_test extends \advanced_testcase {
             'courseid' => $this->course->id,
             'userid' => $this->ratedid,
             'rating' => 5,
+            'review' => '',
             'timecreated' => time(),
             'timemodified' => time(),
         ]);
@@ -193,6 +193,7 @@ final class advanced_test extends \advanced_testcase {
             'courseid' => $this->course->id,
             'userid' => $this->userid,
             'rating' => 4,
+            'review' => '',
             'timecreated' => time(),
             'timemodified' => time(),
         ]);

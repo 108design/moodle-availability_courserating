@@ -34,7 +34,7 @@ Feature: availability_courserating
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Course rated" "button" in the "Add restriction..." "dialogue"
-    Then I should see "Please set" in the "region-main" "region"
+    Then I should see "Please choose" in the "region-main" "region"
     And I set the field "Course rated" to "No"
     And I click on ".availability-item .availability-eye img" "css_element"
     And I click on "Save and return to course" "button"
@@ -44,9 +44,9 @@ Feature: availability_courserating
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Course rated" "button"
-    Then I should see "Please set" in the "region-main" "region"
+    Then I should see "Please choose" in the "region-main" "region"
     And I set the field "Course rated" to "No"
-    But I should not see "Please set" in the "region-main" "region"
+    But I should not see "Please choose" in the "region-main" "region"
     And I click on "Save and return to course" "button"
 
     # Configure page C for users who rated the course.
@@ -89,6 +89,7 @@ Feature: availability_courserating
   Scenario: See restricted feedback users who have not responded
     Given I am on the "C1" "Course" page logged in as "teacher1"
 
+    And I add a rating for course "C1" by user "student2"
     And I am on "Course 1" course homepage with editing mode on
     And I add a feedback activity to course "Course 1" section "2" and I fill the form with:
       | Name                | Frogs                                             |

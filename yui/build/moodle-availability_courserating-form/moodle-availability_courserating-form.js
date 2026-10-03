@@ -1,3 +1,5 @@
+YUI.add('moodle-availability_courserating-form', function (Y, NAME) {
+
 /*
  * This file is part of Moodle - http://moodle.org/
  *
@@ -19,8 +21,6 @@
  * @author Andreas Giesen <andreas@108design.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-YUI.add('moodle-availability_courserating-form', function (Y, NAME) {
 
 /**
  * JavaScript for form editing course rated condition.
@@ -50,7 +50,7 @@ M.availability_courserating.form.getNode = function(json) {
     // Create HTML structure.
     var tit = M.util.get_string('title', 'availability_courserating');
     var html = '<label class="form-group"><span class="p-r-1">' + tit + '</span>';
-    html += '<span class="availability-courserating"><select class="custom-select" name="id" title=' + tit + '>';
+    html += '<span class="availability-courserating"><select class="custom-select" name="id" title="' + tit + '">';
     html += '<option value="choose">' + M.util.get_string('choosedots', 'moodle') + '</option>';
     html += '<option value="1">' + M.util.get_string('yes', 'moodle') + '</option>';
     html += '<option value="0">' + M.util.get_string('no', 'moodle') + '</option>';
@@ -94,5 +94,6 @@ M.availability_courserating.form.fillErrors = function(errors, node) {
         errors.push('availability_courserating:missing');
     }
 };
+
 
 }, '@VERSION@', {"requires": ["base", "node", "event", "moodle-core_availability-form"]});

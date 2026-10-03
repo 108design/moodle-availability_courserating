@@ -1,56 +1,71 @@
-name: Tests
+name: Mutation tests
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   ci:
-    name: ci
-    runs-on: ubuntu-latest
-
+    name: Moodle ${{ matrix.moodle-branch }} / ${{ matrix.database }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
-        moodle-branch: ['main']
-        php: ['8.3']
-        database: ['mysqli']
-
+        moodle-branch: [MOODLE_405_STABLE]
+        database: [pgsql]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+        ports: [5432:5432]
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: '1'
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+        ports: [3306:3306]
+    env:
+      DB: ${{ matrix.database }}
+      MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+      NVM_DIR: /home/runner/.nvm
     steps:
-      - name: checkout plugin
+      - name: Check out plugin
         uses: actions/checkout@v4
         with:
           path: this-plugin
-
-      - name: setup PHP
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: '8.3'
           ini-values: max_input_vars=5000
-          tools: infection, phpunit
+          tools: composer, infection:0.32.3
           coverage: pcov
-
-      - name: composer
+      - name: Initialise Moodle Plugin CI
         run: |
-           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci
-           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
-           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
-           sudo locale-gen en_AU.UTF-8
-           sudo systemctl start mysql.service
-
-      - name: install Moodle
-        run: moodle-plugin-ci install --db-user=root --db-pass=root --db-host=127.0.0.1 --plugin this-plugin
-        env:
-          DB: ${{ matrix.database }}
-          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-
-      - name: autoload
-        working-directory: moodle
+          composer create-project --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci 4.5.11
+          echo "$(pwd)/ci/bin" >> "$GITHUB_PATH"
+          echo "$(pwd)/ci/vendor/bin" >> "$GITHUB_PATH"
+          sudo locale-gen en_AU.UTF-8
+      - name: Install Moodle and Course Rating dependency
+        id: install
         run: |
-           echo '<?php' > vendor/autoloadmoodle.php
-           echo 'define("PHPUNIT_UTIL", true);' >> vendor/autoloadmoodle.php
-           echo 'require(__DIR__ . "/../lib/phpunit/bootstrap.php");' >> vendor/autoloadmoodle.php
-           echo 'require("autoload.php");' >> vendor/autoloadmoodle.php
-
-      - name: infection
-        if: ${{ !cancelled() }}
-        run: infection -s --only-covered --configuration=availability/condition/courserating/.infection.json5
+          git clone --branch MOODLE_405_STABLE --single-branch https://github.com/marinaglancy/moodle-tool_courserating.git extra-plugins/tool_courserating
+          git -C extra-plugins/tool_courserating checkout 7e94aa78adbc3fc6c7b5a683e43da7f0fa046afd
+          moodle-plugin-ci install --db-host=127.0.0.1 --plugin this-plugin --extra-plugins extra-plugins
+      - name: PHPUnit including rating integration
+        run: moodle-plugin-ci phpunit --testdox --fail-on-skipped --fail-on-warning
+      - name: Mutate rating condition and frontend
         working-directory: moodle
+        run: infection --threads=1 --test-framework-options="--testsuite=availability_courserating_testsuite" --configuration=availability/condition/courserating/.infection.json5

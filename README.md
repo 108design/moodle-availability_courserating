@@ -67,3 +67,19 @@ changes are copyright 2026 Andreas Giesen.
 
 GNU General Public License version 3 or later. See [LICENSE](LICENSE) for the
 complete license text.
+
+## Automated tests
+
+GitHub Actions tests the published plugin on Moodle 4.5 and 5.0, with MariaDB
+10.11 and PostgreSQL 16, PHP 8.3, and Firefox/Chrome on Boost/Classic.
+The test environment installs `marinaglancy/moodle-tool_courserating` at the
+revision pinned in the workflows before initialising Moodle. PHPUnit uses
+Moodle's generated configuration and fails when integration tests are skipped.
+Browser scenarios exercise rating-based access changes, user isolation and
+restricted feedback recipients. They do not rely on course completion settings.
+
+Moodle Plugin CI runs on pushes and pull requests. The existing monthly schedule
+reuses the same workflow. Mutation tests use Moodle 4.5 and the actual rating
+dependency; database mutation runs are serial. These checks do not deploy Moodle.
+Local PHP, integration and browser checks remain part of development; CI verifies
+the exact published files in a clean environment.

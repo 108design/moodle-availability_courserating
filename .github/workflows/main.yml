@@ -1,155 +1,116 @@
 name: Tests
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
   ci:
-    name: ci
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: 'postgres'
-          POSTGRES_HOST_AUTH_METHOD: 'trust'
-        options: --health-cmd="pg_isready" --health-interval 10s --health-timeout 5s --health-retries 5
-        ports:
-          - 5432:5432
-      mariadb:
-        image: mariadb:10
-        env:
-          MYSQL_USER: 'root'
-          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-          MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
-          MYSQL_COLLATION_SERVER: "utf8mb4_unicode_ci"
-        options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
-        ports:
-          - 3306:3306
-
+    name: Moodle ${{ matrix.moodle-branch }} / ${{ matrix.database }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2']
-        moodle-branch: ['MOODLE_403_STABLE', 'MOODLE_404_STABLE', 'MOODLE_405_STABLE']
-        database: ['mariadb', 'pgsql']
-        include:
-          - php: '8.3'
-            moodle-branch: 'main'
-            database: 'pgsql'
-        
+        moodle-branch: [MOODLE_405_STABLE, MOODLE_500_STABLE]
+        database: [mariadb, pgsql]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+        ports: [5432:5432]
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: '1'
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+        ports: [3306:3306]
+    env:
+      DB: ${{ matrix.database }}
+      MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+      NVM_DIR: /home/runner/.nvm
     steps:
-      - name: checkout plugin
+      - name: Check out plugin
         uses: actions/checkout@v4
         with:
           path: this-plugin
-
-      - name: setup PHP
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: '8.3'
           ini-values: max_input_vars=5000
-          tools: composer:v2.5
+          tools: composer
           coverage: pcov
-
-      - name: composer
+      - name: Initialise Moodle Plugin CI
         run: |
-           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci
-           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
-           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
-           sudo locale-gen en_AU.UTF-8
-
-      - name: install Moodle
-        run: moodle-plugin-ci --ansi install --db-host=127.0.0.1 --plugin this-plugin
-        env:
-          DB: ${{ matrix.database }}
-          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-
-      - name: phplint
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi phplint
-
-      - name: phpmd
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi phpmd
-
-      - name: phpdoc
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi phpdoc
-
-      - name: codechecker
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi codechecker
-
-      - name: validate
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi validate
-
-      - name: savepoints
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi savepoints
-
-      - name: grunt
-        if: ${{ matrix.moodle-branch == 'main'}}
-        run: moodle-plugin-ci --ansi grunt
-
-      - name: mustache
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi mustache
-
-      - name: phpunit
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi phpunit --testdox --coverage-text --coverage-clover
-
-      - name: privacy
-        if: ${{ matrix.moodle-branch == 'main'}}
-        run: vendor/bin/phpunit --colors --no-coverage --testsuite tool_dataprivacy_testsuite,tool_policy_testsuite,core_privacy_testsuite
-        working-directory: moodle
-
-      - name: other
-        if: ${{ matrix.moodle-branch == 'main'}}
-        run: vendor/bin/phpunit --colors --no-coverage --testsuite core_availability_testsuite
-        working-directory: moodle
-
-      - name: coveralls
-        if: ${{ matrix.moodle-branch == 'main'}}
-        run: moodle-plugin-ci coveralls-upload || true
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: firefox
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi behat
-
-      - name: faildump
-        if: ${{ failure() && steps.behat.outcome == 'failure' }}
+          composer create-project --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci 4.5.11
+          echo "$(pwd)/ci/bin" >> "$GITHUB_PATH"
+          echo "$(pwd)/ci/vendor/bin" >> "$GITHUB_PATH"
+          sudo locale-gen en_AU.UTF-8
+      - name: Install Moodle and Course Rating dependency
+        id: install
+        run: |
+          git clone --branch MOODLE_405_STABLE --single-branch https://github.com/marinaglancy/moodle-tool_courserating.git extra-plugins/tool_courserating
+          git -C extra-plugins/tool_courserating checkout 7e94aa78adbc3fc6c7b5a683e43da7f0fa046afd
+          moodle-plugin-ci install --db-host=127.0.0.1 --plugin this-plugin --extra-plugins extra-plugins
+      - name: PHP syntax
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci phplint
+      - name: PHP mess detector
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci phpmd
+      - name: PHP documentation
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci phpdoc
+      - name: Coding standard
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci codechecker
+      - name: Plugin validation
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci validate
+      - name: Upgrade savepoints
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci savepoints
+      - name: JavaScript build and feature syntax
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci grunt
+      - name: Mustache templates
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci mustache
+      - name: PHPUnit including rating integration
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci phpunit --testdox --coverage-text --coverage-clover --fail-on-skipped --fail-on-warning
+      - name: Behat Firefox Boost
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci behat --auto-rerun=0
+      - name: Behat Chrome Boost
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci behat --profile chrome --auto-rerun=0
+      - name: Behat Firefox Classic
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci behat --suite classic --auto-rerun=0
+      - name: Behat Chrome Classic
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: moodle-plugin-ci behat --suite classic --profile chrome --auto-rerun=0
+      - name: Save test diagnostics
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
-          name: firefox faildump (${{ join(matrix.*, ', ') }})
-          path: ${{ github.workspace }}/moodledata/behat_dump
+          name: diagnostics-${{ matrix.moodle-branch }}-${{ matrix.database }}
+          path: |
+            moodledata/behat_dump
+            coverage.xml
           retention-days: 7
           if-no-files-found: ignore
- 
-      - name: chrome
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi behat --profile chrome
-
-      - name: firefox classic
-        id: behat
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi behat --suite="classic"
-      
-      - name: chrome classic
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi behat  --suite="classic" --profile chrome
-
-      - name: admin bookmarks
-        if: ${{ matrix.moodle-branch == 'main'}}
-        run: moodle-plugin-ci --ansi behat --auto-rerun=0 --profile chrome blocks/admin_bookmarks
-        working-directory: moodle
-
-      - name: admin xmldb
-        if: ${{ matrix.moodle-branch == 'main'}}
-        run: moodle-plugin-ci --ansi behat --auto-rerun=0 --profile chrome admin/tool/xmldb
-        working-directory: moodle
-

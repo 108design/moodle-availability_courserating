@@ -41,7 +41,6 @@ use availability_courserating\condition;
  * @author    Renaat Debleu <info@eWallah.net>
  * @author    Andreas Giesen <andreas@108design.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \availability_courserating
  */
 final class basic_test extends \basic_testcase {
     /**

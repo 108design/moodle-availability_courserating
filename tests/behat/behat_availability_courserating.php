@@ -62,6 +62,7 @@ class behat_availability_courserating extends behat_base {
                 'courseid' => $courseid,
                 'userid' => $userid,
                 'rating' => 5,
+                'review' => '',
                 'timecreated' => time(),
                 'timemodified' => time(),
             ]);

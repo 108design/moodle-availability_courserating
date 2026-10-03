@@ -38,7 +38,6 @@ namespace availability_courserating;
  * @author    Renaat Debleu <info@eWallah.net>
  * @author    Andreas Giesen <andreas@108design.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \availability_courserating
  */
 final class behat_test extends \advanced_testcase {
     /**

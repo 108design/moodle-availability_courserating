@@ -1,3 +1,12 @@
+## Test environment correction (2026-10-03)
+
+* Align CI with the declared Moodle 4.5/5.0 support and install the real rating dependency.
+* Use version-appropriate Moodle PHPUnit configuration and complete rating fixtures.
+* Correct translated expectations and feedback recipient fixtures; replace the inherited
+  completion scenario with rating-based user isolation.
+* Quote the multi-word form title correctly and rebuild all three YUI JavaScript files.
+* Correct the supported Infection invocation; reuse the test matrix for scheduled checks.
+
 ## Licensing correction (2026-08-24)
 
 * Restored the GNU GPL v3 or later license required by the GPL-licensed origin.
