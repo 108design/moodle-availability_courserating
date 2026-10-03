@@ -15,5 +15,6 @@
         "configDir": "../../..",
         "customPath": "../../../vendor/bin/phpunit"
     },
-    "initialTestsPhpOptions": "-dxdebug.mode=off -dpcov.enabled=1 -dpcov.directory=."
+    "initialTestsPhpOptions": "-dxdebug.mode=off -dpcov.enabled=1 -dpcov.directory=.",
+    "bootstrap": "tests/infection_bootstrap.php"
 }
