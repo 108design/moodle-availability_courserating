@@ -16,5 +16,5 @@
         "customPath": "../../../vendor/bin/phpunit"
     },
     "initialTestsPhpOptions": "-dxdebug.mode=off -dpcov.enabled=1 -dpcov.directory=.",
-    "bootstrap": "tests/infection_bootstrap.php"
+    "bootstrap": "availability/condition/courserating/tests/infection_bootstrap.php"
 }

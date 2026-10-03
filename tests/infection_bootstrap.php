@@ -22,5 +22,16 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__DIR__, 4) . '/vendor/autoload.php');
-require_once(dirname(__DIR__, 4) . '/lib/phpunit/bootstrap.php');
+// phpcs:disable moodle.Files.MoodleInternal.MoodleInternalGlobalState
+
+// Source reflection needs class loading only; PHPUnit starts its own full test environment.
+define('MOODLE_INTERNAL', true);
+define('IGNORE_COMPONENT_CACHE', true);
+global $CFG;
+$CFG = new stdClass();
+$CFG->dirroot = dirname(__DIR__, 4);
+$CFG->libdir = $CFG->dirroot . '/lib';
+$CFG->admin = 'admin';
+$CFG->debug = 0;
+require_once($CFG->libdir . '/classes/component.php');
+\core\component::register_autoloader();
