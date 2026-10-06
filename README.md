@@ -1,4 +1,8 @@
-# Course Rating Availability for Moodle
+<p align="center">
+  <img src="https://raw.githubusercontent.com/108design/moodle-availability_courserating/main/docs/branding/logo.svg" alt="Availability Course Rating logo" width="125" height="125">
+</p>
+
+# Availability Course Rating
 
 Make an activity or course section available according to whether a learner has
 rated the current course. Use the condition to offer a follow-up after a rating,
