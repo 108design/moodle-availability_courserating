@@ -1,3 +1,8 @@
+/**
+ * File documentation for yui/src/form/js/form.js.
+ *
+ * @package   availability_courserating
+ */
 /*
  * This file is part of Moodle - http://moodle.org/
  *
