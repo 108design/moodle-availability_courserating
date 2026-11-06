@@ -1,0 +1,15 @@
+name: Availability Course Rating
+summary: '108design''s free GPL availability condition: unlock Moodle activities or sections according
+  to whether the learner has rated the current course.'
+category: Availability conditions
+description: |
+  Make a Moodle activity or course section available according to whether the current learner has rated the course. Choose a positive condition to offer a follow-up after a rating, or a negative condition to show a reminder while no rating exists. Combine it with other conditions in Moodle's normal Restrict access editor.
+
+  The condition checks the learner's rating in the current course. Ratings in other courses do not satisfy it. Moodle's own restriction settings determine whether unavailable content is hidden or shown with an explanation.
+
+  Requires the separate Course Rating plugin (tool_courserating). Maintained by 108design and available free of charge under the GNU GPL v3 or later. Adapted from the GPL Course Completed availability condition; original authorship and licence notices are retained.
+labels:
+- fully-free
+links:
+  docs: https://github.com/108design/moodle-availability_courserating/blob/main/README.md
+  issues: https://github.com/108design/moodle-availability_courserating/issues
