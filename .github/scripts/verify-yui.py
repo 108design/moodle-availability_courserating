@@ -41,6 +41,8 @@ source = (checkout / 'yui/src/form/js/form.js').read_bytes()
 notice = re.search(rb'/\*\n \* This file is part of Moodle[^*]*(?:\*(?!/)[^*]*)*\*/', source)
 assert notice is not None
 header = notice.group() + b'\n\n'
+source_documentation = source[:notice.start()]
+assert re.fullmatch(rb'/\*\*[^*]*(?:\*(?!/)[^*]*)*\*/\n', source_documentation)
 expected = {p.relative_to(expected_build) for p in expected_build.rglob('*.js')}
 generated = {p.relative_to(build) for p in build.rglob('*') if p.is_file()}
 assert len(expected) == 3 and expected == generated, 'Unexpected generated YUI files'
@@ -49,6 +51,12 @@ for name in sorted(expected):
     built_file = build / name
     data = built_file.read_bytes()
     assert data.startswith(b'YUI.add('), name
+    if not name.name.endswith('-min.js'):
+        # Shifter copies the source file's own documentation into the
+        # unminified wrapper. The release keeps that comment in the source.
+        wrapper, separator, body = data.partition(b'\n\n')
+        assert separator and body.startswith(source_documentation), name
+        data = wrapper + separator + body.removeprefix(source_documentation)
     licensed = header + data
     assert source_file.read_bytes() == licensed, f'Stale generated YUI file: {name}'
     built_file.write_bytes(licensed)
