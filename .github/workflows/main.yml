@@ -85,7 +85,9 @@ jobs:
         run: moodle-plugin-ci savepoints
       - name: JavaScript build and feature syntax
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: moodle-plugin-ci grunt
+        run: |
+          moodle-plugin-ci grunt -t amd -t gherkinlint -t stylelint
+          python3 this-plugin/.github/scripts/verify-yui.py this-plugin moodle/availability/condition/courserating
       - name: Mustache templates
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: moodle-plugin-ci mustache
