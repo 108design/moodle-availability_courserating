@@ -1,9 +1,11 @@
-# Generated for the exact normal installation profile; CAMP metadata stays in Git.
+# Generated for the exact normal installation profile.
 * -export-ignore -export-subst
 "/.camp" export-ignore -export-subst
 "/.camp/listing.yml" export-ignore -export-subst
 "/.gitattributes" export-ignore -export-subst
 "/.github" export-ignore -export-subst
+"/.github/scripts" export-ignore -export-subst
+"/.github/scripts/verify-yui.py" export-ignore -export-subst
 "/.github/workflows" export-ignore -export-subst
 "/.github/workflows/camp-release.yml" export-ignore -export-subst
 "/.github/workflows/cron.yml" export-ignore -export-subst
@@ -26,10 +28,13 @@
 "/docs/branding" export-ignore -export-subst
 "/docs/branding/logo.svg" export-ignore -export-subst
 "/lang" -export-ignore -export-subst
+"/lang/de" -export-ignore -export-subst
+"/lang/de/availability_courserating.php" -export-ignore -export-subst
 "/lang/en" -export-ignore -export-subst
 "/lang/en/availability_courserating.php" -export-ignore -export-subst
 "/pix" -export-ignore -export-subst
 "/pix/icon.png" -export-ignore -export-subst
+"/pix/icon.svg" -export-ignore -export-subst
 "/tests" -export-ignore -export-subst
 "/tests/advanced_test.php" -export-ignore -export-subst
 "/tests/basic_test.php" -export-ignore -export-subst
