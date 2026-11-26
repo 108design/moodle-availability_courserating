@@ -19,6 +19,7 @@
 "/CHANGES.md" -export-ignore -export-subst
 "/LICENSE" -export-ignore -export-subst
 "/README.md" -export-ignore -export-subst
+"/TRADEMARKS.md" -export-ignore -export-subst
 "/classes" -export-ignore -export-subst
 "/classes/condition.php" -export-ignore -export-subst
 "/classes/frontend.php" -export-ignore -export-subst
