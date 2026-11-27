@@ -34,6 +34,8 @@
 "/lang" -export-ignore -export-subst
 "/lang/de" -export-ignore -export-subst
 "/lang/de/availability_courserating.php" -export-ignore -export-subst
+"/lang/de_du" -export-ignore -export-subst
+"/lang/de_du/availability_courserating.php" -export-ignore -export-subst
 "/lang/en" -export-ignore -export-subst
 "/lang/en/availability_courserating.php" -export-ignore -export-subst
 "/pix" -export-ignore -export-subst
