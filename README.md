@@ -57,6 +57,8 @@ Original authorship and copyright notices are retained.
 
 ## License
 
+Available free of charge under the terms of the applicable license.
+
 GNU General Public License version 3 or later. See [LICENSE](LICENSE) for the full terms.
 
 This program is distributed in the hope that it will be useful,
