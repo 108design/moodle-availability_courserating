@@ -33,5 +33,6 @@ $plugin->component = 'availability_courserating';
 $plugin->requires = 2024100700;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->supported = [405, 500];
-$plugin->release = '1.3.0';
-$plugin->version = 2026112600;
+$plugin->release = '1.4.0';
+$plugin->version = 2026112700;
+$plugin->dependencies = ['tool_courserating' => ANY_VERSION];

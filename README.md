@@ -8,9 +8,18 @@ Make an activity or course section available according to whether a learner has
 rated the current course. Use the condition to offer a follow-up after a rating,
 or to show a rating reminder to learners who have not yet submitted one.
 
+<details>
+<summary>Screenshots</summary>
+
+| Require a course rating | Course ratings and access restrictions |
+| --- | --- |
+| [![Course rated set to Yes](https://raw.githubusercontent.com/108design/moodle-availability_courserating/main/docs/screenshots/course-rating-restriction.jpg)](docs/screenshots/course-rating-restriction.jpg) | [![Rating stars from the separate Course Rating plugin](https://raw.githubusercontent.com/108design/moodle-availability_courserating/main/docs/screenshots/course-rating-stars.jpg)](docs/screenshots/course-rating-stars.jpg) |
+
+</details>
+
 ## Requirements and installation
 
-- Moodle 4.5 or later.
+- Moodle 4.5 or 5.0.
 - The [Course Rating plugin](https://github.com/marinaglancy/moodle-tool_courserating)
   (`tool_courserating`) must be installed.
 

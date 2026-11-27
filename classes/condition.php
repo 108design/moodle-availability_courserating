@@ -101,6 +101,12 @@ class condition extends \core_availability\condition {
     public function is_available($not, info $info, $grabthelot, $userid) {
         global $DB;
 
+        // A restored restriction must remain unavailable if its rating data is missing.
+        // Return before applying either polarity so missing data cannot grant access.
+        if (!$DB->get_manager()->table_exists('tool_courserating_rating')) {
+            return false;
+        }
+
         $courseid = $info->get_course()->id;
         $allow = $DB->record_exists('tool_courserating_rating', ['courseid' => $courseid, 'userid' => $userid]);
         if (!$this->courserated) {
@@ -177,11 +183,15 @@ class condition extends \core_availability\condition {
             return $users;
         }
 
+        // Preserve the existing staff exception while excluding learners when data is missing.
+        $adusers = $checker->get_users_by_capability('moodle/course:manageactivities');
+        if (!$DB->get_manager()->table_exists('tool_courserating_rating')) {
+            return array_intersect_key($users, $adusers);
+        }
+
         $course = $info->get_course();
         $ratedusers = $DB->get_records_menu('tool_courserating_rating', ['courseid' => $course->id], '', 'userid,userid');
 
-        // List users who always keep access visibility (e.g. teachers/managers).
-        $adusers = $checker->get_users_by_capability('moodle/course:manageactivities');
         // Filter the user list.
         $result = [];
         foreach ($users as $id => $user) {

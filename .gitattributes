@@ -28,6 +28,9 @@
 "/docs" export-ignore -export-subst
 "/docs/branding" export-ignore -export-subst
 "/docs/branding/logo.svg" export-ignore -export-subst
+"/docs/screenshots" export-ignore -export-subst
+"/docs/screenshots/course-rating-restriction.jpg" export-ignore -export-subst
+"/docs/screenshots/course-rating-stars.jpg" export-ignore -export-subst
 "/lang" -export-ignore -export-subst
 "/lang/de" -export-ignore -export-subst
 "/lang/de/availability_courserating.php" -export-ignore -export-subst
